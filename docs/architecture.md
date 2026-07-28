@@ -73,4 +73,4 @@ Simulator / ESP32
 
 # 7. Future Expansion
 
-Future versions will replace the simulator with an ESP32 without modifying the backend architecture.
+Future versions will replace the simulator with an ESP32 without modifying the backend architecture.  
