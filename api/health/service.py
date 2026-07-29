@@ -1,2 +1,5 @@
 def check_health():
-    return {"status": "ok"}
+    return {
+        "service": "Smartnode Platform",
+        "status": "healthy",
+        "version": "0.1.0"}
