@@ -1,6 +1,8 @@
 import random
 
 from .models import MachineResponse
+from api.database.connection import db
+from api.database.config import MACHINES_COLLECTION
 
 
 def build_machine(machine_id: str, status: str) -> MachineResponse:
@@ -25,13 +27,17 @@ def build_machine(machine_id: str, status: str) -> MachineResponse:
         vibration = round(random.uniform(1.20, 2.00), 2)
         current = round(random.uniform(10.0, 15.0), 2)
 
-    return MachineResponse(
+    machine = MachineResponse(
         machine_id=machine_id,
         status=status,
         temperature=temperature,
         vibration=vibration,
         current=current,
     )
+
+    db[MACHINES_COLLECTION].insert_one(machine.model_dump())
+
+    return machine
 
 
 def get_machines():
@@ -40,3 +46,4 @@ def get_machines():
         build_machine("pump_01", "running"),
         build_machine("compressor_01", "idle"),
     ]
+

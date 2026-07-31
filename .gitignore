@@ -3,9 +3,11 @@
 
 # Python cache
 __pycache__/
+*.py[cod]
 
-# VS Code settings
+# VS Code
 .vscode/
 
-# Python compiled files
-*.pyc
+# OS files
+.DS_Store
+Thumbs.db

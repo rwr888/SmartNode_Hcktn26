@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from api.health.routes import router as health_router
 from api.sensors.routes import router as sensors_router
 from api.machines.routes import router as machines_router
+from api.database.connection import db
 
 app = FastAPI()
 
