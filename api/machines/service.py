@@ -35,7 +35,11 @@ def build_machine(machine_id: str, status: str) -> MachineResponse:
         current=current,
     )
 
-    db[MACHINES_COLLECTION].insert_one(machine.model_dump())
+    db[MACHINES_COLLECTION].update_one(
+    {"machine_id": machine.machine_id},
+    {"$set": machine.model_dump()},
+    upsert=True
+    )
 
     return machine
 
