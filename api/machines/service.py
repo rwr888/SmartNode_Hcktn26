@@ -1,8 +1,9 @@
 import random
 
-from .models import MachineResponse
+from .models import MachineResponse, MachineStatusResponse
 from api.database.connection import db
 from api.database.config import MACHINES_COLLECTION
+from api.rules.service import evaluate_machine
 
 
 def build_machine(machine_id: str, status: str) -> MachineResponse:
@@ -35,19 +36,61 @@ def build_machine(machine_id: str, status: str) -> MachineResponse:
         current=current,
     )
 
+    rule = evaluate_machine(machine)
+
+    document = {
+    "machine_id": machine.machine_id,
+
+    "status": machine.status,
+
+    "health": rule.health,
+
+    "temperature": machine.temperature,
+    "vibration": machine.vibration,
+    "current": machine.current,
+
+    "diagnostic": rule.diagnostic,
+
+    "recommendation": rule.recommendation,
+    
+    "timestamp": rule.timestamp
+    }
+
     db[MACHINES_COLLECTION].update_one(
-    {"machine_id": machine.machine_id},
-    {"$set": machine.model_dump()},
-    upsert=True
+        {"machine_id": machine.machine_id},
+        {"$set": document},
+        upsert=True
     )
 
     return machine
 
 
-def get_machines():
-    return [
+def get_machines() -> list[MachineStatusResponse]:
+
+    machines = [
         build_machine("motor_01", "running"),
         build_machine("pump_01", "running"),
         build_machine("compressor_01", "idle"),
     ]
 
+    result = []
+
+    for machine in machines:
+
+        rule = evaluate_machine(machine)
+
+        result.append(
+            MachineStatusResponse(
+                machine_id=machine.machine_id,
+                status=machine.status,
+                health=rule.health,
+                temperature=machine.temperature,
+                vibration=machine.vibration,
+                current=machine.current,
+                diagnostic=rule.diagnostic,
+                recommendation=rule.recommendation,
+                timestamp=rule.timestamp,
+            )
+        )
+
+    return result
