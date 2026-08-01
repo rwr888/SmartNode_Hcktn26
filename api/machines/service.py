@@ -4,9 +4,10 @@ from .models import MachineResponse, MachineStatusResponse
 from api.database.connection import db
 from api.database.config import MACHINES_COLLECTION
 from api.rules.service import evaluate_machine
+from api.alerts.service import create_alert
 
 
-def build_machine(machine_id: str, status: str) -> MachineResponse:
+def build_machine(machine_id: str, status: str):
 
     if status == "running":
         temperature = round(random.uniform(45, 75), 1)
@@ -38,22 +39,18 @@ def build_machine(machine_id: str, status: str) -> MachineResponse:
 
     rule = evaluate_machine(machine)
 
+    create_alert(rule)
+
     document = {
-    "machine_id": machine.machine_id,
-
-    "status": machine.status,
-
-    "health": rule.health,
-
-    "temperature": machine.temperature,
-    "vibration": machine.vibration,
-    "current": machine.current,
-
-    "diagnostic": rule.diagnostic,
-
-    "recommendation": rule.recommendation,
-    
-    "timestamp": rule.timestamp
+        "machine_id": machine.machine_id,
+        "status": machine.status,
+        "health": rule.health,
+        "temperature": machine.temperature,
+        "vibration": machine.vibration,
+        "current": machine.current,
+        "diagnostic": rule.diagnostic,
+        "recommendation": rule.recommendation,
+        "timestamp": rule.timestamp,
     }
 
     db[MACHINES_COLLECTION].update_one(
@@ -62,12 +59,12 @@ def build_machine(machine_id: str, status: str) -> MachineResponse:
         upsert=True
     )
 
-    return machine
+    return machine, rule
 
 
 def get_machines() -> list[MachineStatusResponse]:
 
-    machines = [
+    data = [
         build_machine("motor_01", "running"),
         build_machine("pump_01", "running"),
         build_machine("compressor_01", "idle"),
@@ -75,9 +72,7 @@ def get_machines() -> list[MachineStatusResponse]:
 
     result = []
 
-    for machine in machines:
-
-        rule = evaluate_machine(machine)
+    for machine, rule in data:
 
         result.append(
             MachineStatusResponse(
@@ -94,3 +89,4 @@ def get_machines() -> list[MachineStatusResponse]:
         )
 
     return result
+
