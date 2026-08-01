@@ -6,9 +6,9 @@ class AlertResponse(BaseModel):
 
     health: str
 
-    title: str
+    diagnostic: str
 
-    message: str
+    recommendation: str
 
     acknowledged: bool
 

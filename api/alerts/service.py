@@ -8,16 +8,14 @@ from api.database.config import ALERTS_COLLECTION
 
 
 def create_alert(rule: RuleResult) -> AlertResponse:
-    print("Creating alert...")
 
     existing = db[ALERTS_COLLECTION].find_one(
         {
             "machine_id": rule.machine_id,
             "health": rule.health,
-            "title": rule.diagnostic,
+            "diagnostic": rule.diagnostic,
             "acknowledged": False,
         }
-        
     )
 
     if existing:
@@ -27,8 +25,8 @@ def create_alert(rule: RuleResult) -> AlertResponse:
     alert = AlertResponse(
         machine_id=rule.machine_id,
         health=rule.health,
-        title=rule.diagnostic,
-        message=rule.recommendation,
+        diagnostic=rule.diagnostic,
+        recommendation=rule.recommendation,
         acknowledged=False,
         timestamp=datetime.now().isoformat(),
     )
@@ -38,3 +36,4 @@ def create_alert(rule: RuleResult) -> AlertResponse:
     )
 
     return alert
+
