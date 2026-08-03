@@ -37,3 +37,54 @@ def create_alert(rule: RuleResult) -> AlertResponse:
 
     return alert
 
+def get_alerts() -> list[AlertResponse]:
+
+    alerts = []
+
+    cursor = db[ALERTS_COLLECTION].find()
+
+    for document in cursor:
+
+        document.pop("_id", None)
+
+        alerts.append(
+            AlertResponse(**document)
+        )
+
+    return alerts
+
+def get_active_alerts() -> list[AlertResponse]:
+
+    alerts = []
+
+    cursor = db[ALERTS_COLLECTION].find(
+        {
+            "acknowledged": False
+        }
+    )
+
+    for document in cursor:
+
+        document.pop("_id", None)
+
+        alerts.append(
+            AlertResponse(**document)
+        )
+
+    return alerts
+
+def acknowledge_alert(machine_id: str):
+
+    db[ALERTS_COLLECTION].update_many(
+        {
+            "machine_id": machine_id,
+            "acknowledged": False
+        },
+        {
+            "$set": {
+                "acknowledged": True
+            }
+        }
+    )
+
+

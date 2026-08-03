@@ -1,0 +1,22 @@
+comandos utiles cmd
+
+para arrancaar uvicorn
+uvicorn api.main:app --reload
+
+para crear varios doc.py vacios 
+for %i in (__init__.py models.py routes.py service.py) do type nul > %i
+
+crea entorno virtual
+python -m venv .venv
+
+activa entorno virtual
+.venv\Scripts\activate
+
+prueba endpoint machines
+curl http://127.0.0.1:8000/machines
+
+prueba endpoint alerts
+curl http://127.0.0.1:8000/alerts
+curl http://127.0.0.1:8000/alerts/active
+curl http://127.0.0.1:8000/alerts/motor_01/acknowledge
+
