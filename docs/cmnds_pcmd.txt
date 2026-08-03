@@ -22,3 +22,4 @@ curl http://127.0.0.1:8000/alerts/motor_01/acknowledge
 
 curl http://127.0.0.1:8000/dashboard
 
+curl http://127.0.0.1:8000/health
