@@ -4,6 +4,7 @@ from api.machines.models import MachineResponse
 from .models import RuleResult
 
 
+"""Classifies machine temperature into severity levels."""
 def classify_temperature(value: float) -> str:
     if value < 45:
         return "LOW"
@@ -15,6 +16,7 @@ def classify_temperature(value: float) -> str:
         return "CRITICAL"
 
 
+"""Classifies vibration level."""
 def classify_vibration(value: float) -> str:
     if value < 0.10:
         return "LOW"
@@ -27,6 +29,7 @@ def classify_vibration(value: float) -> str:
 
 
 def classify_current(value: float) -> str:
+    """Classifies electrical current."""
     if value < 1.0:
         return "LOW"
     elif value < 6.0:
@@ -37,6 +40,10 @@ def classify_current(value: float) -> str:
         return "CRITICAL"
 
 
+"""
+Evaluates machine sensor values using the SmartNode
+rule engine and returns its health assessment.
+"""
 def evaluate_machine(machine: MachineResponse) -> RuleResult:
 
     temperature = classify_temperature(machine.temperature)
@@ -48,6 +55,9 @@ def evaluate_machine(machine: MachineResponse) -> RuleResult:
     recommendation = "Continue monitoring."
 
     # R-012
+    # -------------------------
+    # Critical conditions
+    # -------------------------
     if temperature == "CRITICAL":
         health = "CRITICAL"
         diagnostic = "Possible winding insulation failure or severe overheating."
@@ -71,6 +81,9 @@ def evaluate_machine(machine: MachineResponse) -> RuleResult:
         recommendation = "Stop machine and perform inspection."
 
     # R-003
+    # -------------------------
+    # Warning conditions
+    # -------------------------
     elif (
         machine.status == "running"
         and temperature == "HIGH"
@@ -116,6 +129,9 @@ def evaluate_machine(machine: MachineResponse) -> RuleResult:
         diagnostic = "Unexpected current draw."
         recommendation = "Inspect electrical contactors."
 
+    # -------------------------
+    # Attention conditions
+    # -------------------------
     # R-002
     elif (
         machine.status == "running"

@@ -1,14 +1,23 @@
 import random
 
 from .models import MachineResponse, MachineStatusResponse
+
 from api.database.connection import db
 from api.database.config import MACHINES_COLLECTION
+
 from api.rules.service import evaluate_machine
 from api.alerts.service import create_alert
 
 
 def build_machine(machine_id: str, status: str):
+    """
+    Generates simulated sensor values for one machine,
+    evaluates its health, stores the latest state in MongoDB,
+    creates an alert if necessary and returns both the machine
+    and the evaluated rule.
+    """
 
+    # Generate realistic sensor values according to machine status.
     if status == "running":
         temperature = round(random.uniform(45, 75), 1)
         vibration = round(random.uniform(0.20, 0.80), 2)
@@ -29,6 +38,7 @@ def build_machine(machine_id: str, status: str):
         vibration = round(random.uniform(1.20, 2.00), 2)
         current = round(random.uniform(10.0, 15.0), 2)
 
+    # Build the machine object.
     machine = MachineResponse(
         machine_id=machine_id,
         status=status,
@@ -37,10 +47,13 @@ def build_machine(machine_id: str, status: str):
         current=current,
     )
 
+    # Evaluate machine health using the Rules Engine.
     rule = evaluate_machine(machine)
 
+    # Generate an alert if this condition is not already active.
     create_alert(rule)
 
+    # Store only the latest machine state.
     document = {
         "machine_id": machine.machine_id,
         "status": machine.status,
@@ -56,13 +69,17 @@ def build_machine(machine_id: str, status: str):
     db[MACHINES_COLLECTION].update_one(
         {"machine_id": machine.machine_id},
         {"$set": document},
-        upsert=True
+        upsert=True,
     )
 
     return machine, rule
 
 
 def get_machines() -> list[MachineStatusResponse]:
+    """
+    Generates the simulated plant state and returns the
+    evaluated status of every machine.
+    """
 
     data = [
         build_machine("motor_01", "running"),

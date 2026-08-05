@@ -1,16 +1,18 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+# API modules
 from api.health.routes import router as health_router
 from api.sensors.routes import router as sensors_router
 from api.machines.routes import router as machines_router
 from api.alerts.routes import router as alerts_router
 from api.dashboard.routes import router as dashboard_router
 
-from api.database.connection import db
 
+# Create FastAPI application
 app = FastAPI()
 
+# Allow requests from the local dashboard
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -21,6 +23,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Register API routes
 app.include_router(health_router)
 app.include_router(sensors_router)
 app.include_router(machines_router)
