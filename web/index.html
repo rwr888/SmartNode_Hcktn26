@@ -1,40 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>SmartNode Dashboard</title>
-
+    <!-- Fuente moderna desde Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-
-<script src="script.js"></script>
-
 <body>
 
-    <h1>SmartNode Dashboard</h1>
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>SmartNode Dashboard</h1>
+            <p class="subtitle">Estado de las máquinas en tiempo real</p>
+        </header>
 
-    <p>Total machines:
-        <span id="total-machines"></span>
-    </p>
+        <section class="metrics-grid">
+            <!-- Tarjeta: Total -->
+            <div class="card card-total">
+                <div class="card-title">Total de Máquinas</div>
+                <div class="card-value" id="total-machines">0</div>
+            </div>
 
-    <p>Normal:
-        <span id="normal-machines"></span>
-    </p>
+            <!-- Tarjeta: Normal -->
+            <div class="card card-normal">
+                <div class="card-title">
+                    <span class="status-dot dot-normal"></span> Normal
+                </div>
+                <div class="card-value" id="normal-machines">0</div>
+            </div>
 
-    <p>Warning:
-        <span id="warning-machines"></span>
-    </p>
+            <!-- Tarjeta: Warning -->
+            <div class="card card-warning">
+                <div class="card-title">
+                    <span class="status-dot dot-warning"></span> Advertencia
+                </div>
+                <div class="card-value" id="warning-machines">0</div>
+            </div>
 
-    <p>Critical:
-        <span id="critical-machines"></span>
-    </p>
+            <!-- Tarjeta: Critical -->
+            <div class="card card-critical">
+                <div class="card-title">
+                    <span class="status-dot dot-critical"></span> Crítico
+                </div>
+                <div class="card-value" id="critical-machines">0</div>
+            </div>
+        </section>
+    </div>
 
     <script src="script.js"></script>
-
 </body>
-
 </html>
 
